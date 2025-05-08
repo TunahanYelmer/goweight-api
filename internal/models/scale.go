@@ -9,13 +9,13 @@ type Scale struct {
 
 }
 
-func NewScale(id string, name string, address string, status bool, capabilities []string) *Scale {
+func NewScale(id string, name string, address string, status bool) *Scale {
 
 	return &Scale{
 		ID:           id,
 		Name:         name,
 		MACAddress:   address,
-		Capabilities: capabilities,
+		Capabilities: []string{"weight"},
 		Status:       status,
 	}
 
