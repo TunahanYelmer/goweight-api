@@ -1,0 +1,97 @@
+openapi: 3.0.3
+info:
+  title: GoWeight API
+  description: API for connecting to a Bluetooth scale and retrieving weight data using Go
+  version: 1.0.0
+  contact:
+    name: Your Name
+    email: your.email@example.com
+
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+
+paths:
+  /scan:
+    get:
+      summary: Scan for nearby BLE devices
+      description: Scans for Bluetooth Low Energy devices within range.
+      responses:
+        '200':
+          description: List of nearby BLE devices
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BLEDevice'
+
+  /connect:
+    post:
+      summary: Connect to a BLE scale
+      description: Connects to a Bluetooth scale using its MAC address.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectRequest'
+      responses:
+        '200':
+          description: Connection successful
+        '400':
+          description: Invalid MAC address or unable to connect
+
+  /weight:
+    get:
+      summary: Get current weight reading
+      description: Retrieves the latest weight reading from the connected scale.
+      responses:
+        '200':
+          description: Weight data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WeightReading'
+        '404':
+          description: No connected device or no reading available
+
+components:
+  schemas:
+    BLEDevice:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Smart Scale
+        address:
+          type: string
+          example: AA:BB:CC:DD:EE:FF
+        rssi:
+          type: integer
+          example: -65
+
+    ConnectRequest:
+      type: object
+      required:
+        - address
+      properties:
+        address:
+          type: string
+          description: BLE MAC address of the scale
+          example: AA:BB:CC:DD:EE:FF
+
+    WeightReading:
+      type: object
+      properties:
+        weight:
+          type: number
+          format: float
+          example: 72.4
+        unit:
+          type: string
+          example: kg
+        timestamp:
+          type: string
+          format: date-time
+          example: 2025-05-08T15:04:05Z
